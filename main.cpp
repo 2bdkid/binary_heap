@@ -4,6 +4,7 @@
 #include <iterator>
 #include <utility>
 #include <sstream>
+#include <cmath>
 
 class max_heap {
 public:
@@ -23,7 +24,12 @@ private:
 
 max_heap::max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end)
   : rep(begin, end) {
-  for (auto i = rep.end() - 1; i >= rep.begin(); --i)
+  // last node of subtree with height h - 1
+  const auto h = std::ceil(std::log2(rep.size() + 1)) - 1;
+  const auto n = rep.begin() + std::exp2(h) - 1;
+
+  // skip leaf nodes
+  for (auto i = n; i >= rep.begin(); --i)
     bubble_down(i);
 }
 
