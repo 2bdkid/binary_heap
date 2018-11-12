@@ -9,10 +9,11 @@
 class max_heap {
 public:
   max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end);
+
   void insert(int value);
-  friend std::ostream& operator<<(std::ostream& out, const max_heap& heap);
   int maximum() const;
   void remove_maximum();
+  friend std::ostream& operator<<(std::ostream& out, const max_heap& heap);
   
 private:
   std::vector<int>::iterator parent_of(std::vector<int>::iterator child);
@@ -26,10 +27,8 @@ private:
 
 max_heap::max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end)
   : rep(begin, end) {
-  // last node of subtree with height h - 1
+  // skip leaf nodes  
   const auto n = rep.begin() + std::ceil(rep.size() / 2);
-
-  // skip leaf nodes
   for (auto i = n; i >= rep.begin(); --i)
     bubble_down(i);
 }
@@ -58,7 +57,7 @@ void max_heap::remove_maximum() {
     left_child = left_child_of(parent);
     right_child = right_child_of(parent);
 
-    auto max = parent;
+    max = parent;
     if (left_child < rep.end())
       if (*max < *left_child)
 	max = left_child;
