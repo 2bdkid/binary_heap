@@ -21,8 +21,8 @@ private:
   std::vector<int> rep;
 };
 
-max_heap::max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end) {
-  rep.insert(rep.begin(), begin, end);
+max_heap::max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end)
+  : rep(begin, end) {
   for (auto i = rep.end() - 1; i >= rep.begin(); --i)
     bubble_down(i);
 }
@@ -121,6 +121,7 @@ int main() {
       int n = stoi(line);
       arr.push_back(n);
     } catch (...) {
+      // ignore for now
       continue;
     }
   }
