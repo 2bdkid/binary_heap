@@ -12,6 +12,8 @@ public:
 private:
   friend std::ostream& operator<<(std::ostream& out, const max_heap& heap);  
   std::vector<int>::iterator parent_of(std::vector<int>::iterator child);
+  void bubble_up(std::vector<int>::iterator elem);
+  
   std::vector<int> rep;
 };
 
@@ -22,10 +24,8 @@ max_heap::parent_of(std::vector<int>::iterator child) {
   return rep.begin() + (idx - 1) / 2;
 }
 
-void max_heap::insert(int value) {
-  rep.push_back(value);
-  
-  auto child = rep.end() - 1;
+void max_heap::bubble_up(std::vector<int>::iterator elem) {
+  auto child = elem;
   auto parent = parent_of(child);
 
   // bubble up
@@ -34,6 +34,11 @@ void max_heap::insert(int value) {
     child = parent;
     parent = parent_of(parent);
   }
+}
+
+void max_heap::insert(int value) {
+  rep.push_back(value);
+  bubble_up(rep.end() - 1);
 }
 
 std::ostream& operator<<(std::ostream& out, const max_heap& heap) {
@@ -71,7 +76,7 @@ int main() {
   // fill heap using naive method
   max_heap heap;
   
-  for (const auto n : arr)
+  for (const auto& n : arr)
     heap.insert(n);
 
   std::cout << "heap: " << heap << '\n';
