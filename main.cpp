@@ -125,7 +125,7 @@ int main() {
     }
   }
 
-  // fill heap using naive method
+  // linear time to build heap
   max_heap heap(arr.begin(), arr.end());
   std::cout << "heap: " << heap << '\n';
 }
