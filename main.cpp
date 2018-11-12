@@ -11,8 +11,9 @@ public:
   max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end);
 
   void insert(int value);
-  int maximum() const;
+  void remove(std::vector<int>::iterator elem);
   void remove_maximum();
+  int maximum() const;
   friend std::ostream& operator<<(std::ostream& out, const max_heap& heap);
   
 private:
@@ -35,11 +36,11 @@ max_heap::max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator 
 
 int max_heap::maximum() const { return rep[0]; }
 
-void max_heap::remove_maximum() {
-  std::swap(rep.front(), rep.back());
+void max_heap::remove(std::vector<int>::iterator elem) {
+  std::swap(*elem, rep.back());
   rep.resize(rep.size() - 1);
 
-  auto parent = rep.begin();
+  auto parent = elem;
   auto left_child = left_child_of(parent);
   auto right_child = right_child_of(parent);
 
@@ -67,6 +68,10 @@ void max_heap::remove_maximum() {
       if (*max < *right_child)
 	max = right_child;
   }
+}
+
+void max_heap::remove_maximum() {
+  remove(rep.begin());
 }
 
 std::vector<int>::iterator
