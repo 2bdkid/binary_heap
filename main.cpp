@@ -38,7 +38,7 @@ int max_heap::maximum() const { return rep[0]; }
 void max_heap::remove_maximum() {
   std::swap(rep.front(), rep.back());
   rep.resize(rep.size() - 1);
-  
+
   auto parent = rep.begin();
   auto left_child = left_child_of(parent);
   auto right_child = right_child_of(parent);
@@ -51,8 +51,10 @@ void max_heap::remove_maximum() {
     if (*max < *right_child)
       max = right_child;
 
+  // iterate down until heap property is fixed
   while (parent != max) {
-    bubble_down(parent);
+    // swap with the greater child
+    std::swap(*parent, *max);
     parent = max;
     left_child = left_child_of(parent);
     right_child = right_child_of(parent);
