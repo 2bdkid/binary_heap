@@ -7,21 +7,45 @@
 
 class max_heap {
 public:
+  max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end);
   void insert(int value);
   
 private:
   friend std::ostream& operator<<(std::ostream& out, const max_heap& heap);  
   std::vector<int>::iterator parent_of(std::vector<int>::iterator child);
+  std::vector<int>::iterator left_child_of(std::vector<int>::iterator parent);
+  std::vector<int>::iterator right_child_of(std::vector<int>::iterator parent);
   void bubble_up(std::vector<int>::iterator elem);
+  void bubble_down(std::vector<int>::iterator elem);
   
   std::vector<int> rep;
 };
+
+max_heap::max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end) {
+  rep.insert(rep.begin(), begin, end);
+  for (auto i = rep.end() - 1; i >= rep.begin(); --i)
+    bubble_down(i);
+}
 
 std::vector<int>::iterator
 max_heap::parent_of(std::vector<int>::iterator child) {
   // parent = floor((i - 1) / 2)
   const auto idx = std::distance(rep.begin(), child);
   return rep.begin() + (idx - 1) / 2;
+}
+
+std::vector<int>::iterator
+max_heap::left_child_of(std::vector<int>::iterator parent) {
+  // left_child = 2i - 2
+  const auto idx = std::distance(rep.begin(), parent);
+  return rep.begin() + (2 * idx) + 1;
+}
+
+std::vector<int>::iterator
+max_heap::right_child_of(std::vector<int>::iterator parent) {
+  // right_child = 2i - 1
+  const auto idx = std::distance(rep.begin(), parent);
+  return rep.begin() + (2 * idx) + 2;
 }
 
 void max_heap::bubble_up(std::vector<int>::iterator elem) {
@@ -33,6 +57,33 @@ void max_heap::bubble_up(std::vector<int>::iterator elem) {
     std::swap(*child, *parent);
     child = parent;
     parent = parent_of(parent);
+  }
+}
+
+void max_heap::bubble_down(std::vector<int>::iterator elem) {
+  auto parent = elem;
+  auto left_child = left_child_of(parent);
+  auto right_child = right_child_of(parent);
+
+  // stop at leaf level
+  while (left_child < rep.end() || right_child < rep.end()) {
+    // find maximum of parent, left_child, right_child
+    auto max = parent;
+    if (left_child < rep.end())
+      if (*max < *left_child)
+	max = left_child;
+    if (right_child < rep.end())
+      if (*max < *right_child)
+	max = right_child;
+
+    // heap property fixed
+    if (parent == max) break;
+    
+    // swap with the greater child
+    std::swap(*parent, *max);
+    parent = max;
+    left_child = left_child_of(parent);
+    right_child = right_child_of(parent);
   }
 }
 
@@ -48,6 +99,7 @@ std::ostream& operator<<(std::ostream& out, const max_heap& heap) {
     for (auto i = 1u; i < heap.rep.size(); ++i)
       out << ' ' << heap.rep[i];
   }
+  
   return out;
 }
 
@@ -74,10 +126,6 @@ int main() {
   }
 
   // fill heap using naive method
-  max_heap heap;
-  
-  for (const auto& n : arr)
-    heap.insert(n);
-
+  max_heap heap(arr.begin(), arr.end());
   std::cout << "heap: " << heap << '\n';
 }
