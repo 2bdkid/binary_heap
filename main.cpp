@@ -36,14 +36,14 @@ max_heap::parent_of(std::vector<int>::iterator child) {
 
 std::vector<int>::iterator
 max_heap::left_child_of(std::vector<int>::iterator parent) {
-  // left_child = 2i - 2
+  // left_child = 2i + 1
   const auto idx = std::distance(rep.begin(), parent);
   return rep.begin() + (2 * idx) + 1;
 }
 
 std::vector<int>::iterator
 max_heap::right_child_of(std::vector<int>::iterator parent) {
-  // right_child = 2i - 1
+  // right_child = 2i + 2
   const auto idx = std::distance(rep.begin(), parent);
   return rep.begin() + (2 * idx) + 2;
 }
