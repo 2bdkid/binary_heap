@@ -5,6 +5,7 @@
 #include <utility>
 #include <sstream>
 #include <cmath>
+#include <cstddef>
 
 class max_heap {
 public:
@@ -14,6 +15,7 @@ public:
   void remove(std::vector<int>::iterator elem);
   void remove_maximum();
   int maximum() const;
+  std::size_t size() const;
   friend std::ostream& operator<<(std::ostream& out, const max_heap& heap);
   
 private:
@@ -36,38 +38,13 @@ max_heap::max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator 
 
 int max_heap::maximum() const { return rep[0]; }
 
+std::size_t max_heap::size() const { return rep.size(); }
+
 void max_heap::remove(std::vector<int>::iterator elem) {
   std::swap(*elem, rep.back());
   rep.resize(rep.size() - 1);
-
-  auto parent = elem;
-  auto left_child = left_child_of(parent);
-  auto right_child = right_child_of(parent);
-
-  auto max = parent;
-  if (left_child < rep.end())
-    if (*max < *left_child)
-      max = left_child;
-  if (right_child < rep.end())
-    if (*max < *right_child)
-      max = right_child;
-
-  // iterate down until heap property is fixed
-  while (parent != max) {
-    // swap with the greater child
-    std::swap(*parent, *max);
-    parent = max;
-    left_child = left_child_of(parent);
-    right_child = right_child_of(parent);
-
-    max = parent;
-    if (left_child < rep.end())
-      if (*max < *left_child)
-	max = left_child;
-    if (right_child < rep.end())
-      if (*max < *right_child)
-	max = right_child;
-  }
+  if (rep.size() > 0)
+    bubble_down(rep.begin());
 }
 
 void max_heap::remove_maximum() {
@@ -175,6 +152,7 @@ int main() {
 
   // linear time to build heap
   max_heap heap(arr.begin(), arr.end());
+  std::cout << "heap.max() = " << heap.maximum() << '\n';
   heap.remove_maximum();
   std::cout << "heap: " << heap << '\n';
 }
