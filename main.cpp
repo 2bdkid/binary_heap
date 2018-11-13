@@ -142,7 +142,7 @@ int main() {
   
   while (std::getline(stream, line, ' ')) {
     try {
-      int n = stoi(line);
+      int n = std::stoi(line);
       arr.push_back(n);
     } catch (...) {
       // ignore for now
