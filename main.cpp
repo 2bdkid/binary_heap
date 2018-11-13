@@ -11,11 +11,14 @@ class max_heap {
 public:
   max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end);
 
+  void sort();
   void insert(int value);
   void remove(std::vector<int>::iterator elem);
   void remove_maximum();
   int maximum() const;
   std::size_t size() const;
+  // restore heap property of whole tree
+  void build();
   friend std::ostream& operator<<(std::ostream& out, const max_heap& heap);
   
 private:
@@ -24,16 +27,32 @@ private:
   std::vector<int>::iterator right_child_of(std::vector<int>::iterator parent);
   void bubble_up(std::vector<int>::iterator elem);
   void bubble_down(std::vector<int>::iterator elem);
+  void bubble_down(std::vector<int>::iterator elem, std::vector<int>::iterator last);
   
   std::vector<int> rep;
 };
 
 max_heap::max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end)
   : rep(begin, end) {
+  build();
+}
+
+void max_heap::build() {
   // skip leaf nodes  
   const auto n = rep.begin() + std::ceil(rep.size() / 2);
   for (auto i = n; i >= rep.begin(); --i)
     bubble_down(i);
+}
+
+void max_heap::sort() {
+  auto iter = rep.end() - 1;
+
+  while (iter >= rep.begin()) {
+    std::swap(rep.front(), *iter);
+    // bubble root down but ignore elements past iter
+    bubble_down(rep.begin(), iter);
+    --iter;
+  }
 }
 
 int max_heap::maximum() const { return rep[0]; }
@@ -85,24 +104,28 @@ void max_heap::bubble_up(std::vector<int>::iterator elem) {
 }
 
 void max_heap::bubble_down(std::vector<int>::iterator elem) {
+  bubble_down(elem, rep.end());
+}
+
+void max_heap::bubble_down(std::vector<int>::iterator elem, std::vector<int>::iterator last) {
   auto parent = elem;
   auto left_child = left_child_of(parent);
   auto right_child = right_child_of(parent);
 
-  // stop at leaf level
-  while (left_child < rep.end() || right_child < rep.end()) {
+  // stop at last
+  while (left_child < last || right_child < last) {
     // find maximum of parent, left_child, right_child
     auto max = parent;
-    if (left_child < rep.end())
+    if (left_child < last)
       if (*max < *left_child)
-	max = left_child;
-    if (right_child < rep.end())
+        max = left_child;
+    if (right_child < last)
       if (*max < *right_child)
-	max = right_child;
+        max = right_child;
 
     // heap property fixed
     if (parent == max) break;
-    
+
     // swap with the greater child
     std::swap(*parent, *max);
     parent = max;
@@ -152,7 +175,10 @@ int main() {
 
   // linear time to build heap
   max_heap heap(arr.begin(), arr.end());
-  std::cout << "heap.max() = " << heap.maximum() << '\n';
-  heap.remove_maximum();
-  std::cout << "heap: " << heap << '\n';
+  std::cout << "heap before: " << heap << '\n';
+  heap.sort();
+  std::cout << "heap sorted: " << heap << '\n';
+  heap.build();
+  heap.insert(22);
+  std::cout << "heap inserted: " << heap << '\n';
 }
