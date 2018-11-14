@@ -18,7 +18,10 @@ public:
   using size_type = typename std::vector<Type>::size_type;
 
   max_heap() = default;
+  ~max_heap() = default;
   max_heap(iterator begin, iterator end);
+  max_heap(const max_heap<Type>& other);
+  max_heap(max_heap<Type>&& other);
 
   iterator begin();
   const_iterator begin() const;
@@ -27,6 +30,8 @@ public:
   const_iterator end() const;
   const_iterator cend() const;
 
+  reference operator=(max_heap<Type> other);
+  reference operator=(max_heap<Type>&& other);
   bool operator==(const max_heap<Type>& other);
   bool operator!=(const max_heap<Type>& other);
   void swap(max_heap& other);
@@ -63,6 +68,15 @@ max_heap<Type>::max_heap(iterator begin, iterator end)
 }
 
 template<typename Type>
+max_heap<Type>::max_heap(const max_heap<Type>& other)
+  : rep(other.rep) { }
+
+template<typename Type>
+max_heap<Type>::max_heap(max_heap<Type>&& other) {
+  std::swap(rep, other.rep);
+}
+
+template<typename Type>
 typename max_heap<Type>::iterator
 max_heap<Type>::begin() { return rep.begin(); }
 
@@ -85,6 +99,22 @@ max_heap<Type>::end() const { return rep.end(); }
 template<typename Type>
 typename max_heap<Type>::const_iterator
 max_heap<Type>::cend() const { return rep.end(); }
+
+template<typename Type>
+typename max_heap<Type>::reference
+max_heap<Type>::operator=(max_heap<Type> other) {
+  // copy-swap
+  std::swap(rep, other.rep);
+  return *this;
+}
+
+template<typename Type>
+typename max_heap<Type>::reference
+max_heap<Type>::operator=(max_heap<Type>&& other) {
+  // copy-swap
+  std::swap(rep, other.rep);
+  return *this;
+}
 
 template<typename Type>
 bool max_heap<Type>::operator==(const max_heap<Type>& other) {
