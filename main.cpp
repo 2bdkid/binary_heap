@@ -1,10 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <iterator>
 #include <utility>
 #include <sstream>
-#include <cmath>
 
 template<typename Type>
 class max_heap {
@@ -201,7 +199,7 @@ template<typename Type>
 typename max_heap<Type>::iterator
 max_heap<Type>::parent_of(iterator child) {
   // parent = floor((i - 1) / 2)
-  const auto idx = std::distance(begin(), child);
+  const auto idx = child - begin();
   return begin() + (idx - 1) / 2;
 }
 
@@ -209,7 +207,7 @@ template<typename Type>
 typename max_heap<Type>::iterator
 max_heap<Type>::left_child_of(iterator parent) {
   // left_child = 2i + 1
-  const auto idx = std::distance(begin(), parent);
+  const auto idx = parent - begin();
   return begin() + (2 * idx) + 1;
 }
 
@@ -217,7 +215,7 @@ template<typename Type>
 typename max_heap<Type>::iterator
 max_heap<Type>::right_child_of(iterator parent) {
   // right_child = 2i + 2
-  const auto idx = std::distance(begin(), parent);
+  const auto idx = parent - begin();
   return begin() + (2 * idx) + 2;
 }
 
