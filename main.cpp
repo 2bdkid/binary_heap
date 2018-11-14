@@ -265,7 +265,7 @@ void max_heap<Type>::bubble_down(iterator elem, iterator last) {
 
 template<typename Type>
 void max_heap<Type>::insert(value_type value) {
-  rep.push_back(value);
+  rep.push_back(std::move(value));
   bubble_up(end() - 1);
 }
 
