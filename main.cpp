@@ -150,7 +150,7 @@ bool max_heap<Type>::empty() const { return rep.empty(); }
 template<typename Type>
 void max_heap<Type>::build() {
   // skip leaf nodes  
-  const auto n = begin() + std::ceil(rep.size() / 2);
+  const auto n = begin() + std::ceil(size() / 2);
   for (auto i = n; i >= begin(); --i)
     bubble_down(i);
 }
@@ -169,7 +169,7 @@ void max_heap<Type>::sort() {
 
 template<typename Type>
 typename max_heap<Type>::reference
-max_heap<Type>::maximum() const { return rep[0]; }
+max_heap<Type>::maximum() const { return *begin(); }
 
 template<typename Type>
 void max_heap<Type>::remove(iterator elem) {
