@@ -5,93 +5,181 @@
 #include <utility>
 #include <sstream>
 #include <cmath>
-#include <cstddef>
 
+template<typename Type>
 class max_heap {
 public:
-  max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end);
+  using value_type = Type;
+  using reference = Type&;
+  using const_reference = const Type&;
+  using iterator = typename std::vector<Type>::iterator;
+  using const_iterator = typename std::vector<Type>::const_iterator;
+  using difference_type = typename std::vector<Type>::difference_type;
+  using size_type = typename std::vector<Type>::size_type;
 
+  max_heap() = default;
+  max_heap(iterator begin, iterator end);
+
+  iterator begin();
+  const_iterator begin() const;
+  const_iterator cbegin() const;
+  iterator end();
+  const_iterator end() const;
+  const_iterator cend() const;
+
+  bool operator==(const max_heap<Type>& other);
+  bool operator!=(const max_heap<Type>& other);
+  void swap(max_heap& other);
+  template<typename T>
+  friend void swap(max_heap<T>& lhs, max_heap<T>& rhs);
+  size_type size() const;
+  size_type max_size() const;
+  bool empty() const;
+  
   void sort();
-  void insert(int value);
-  void remove(std::vector<int>::iterator elem);
+  void insert(value_type value);
+  void remove(iterator elem);
   void remove_maximum();
-  int maximum() const;
-  std::size_t size() const;
-  // restore heap property of whole tree
+  reference maximum() const;
+
+  // build tree in linear time
   void build();
-  friend std::ostream& operator<<(std::ostream& out, const max_heap& heap);
   
 private:
-  std::vector<int>::iterator parent_of(std::vector<int>::iterator child);
-  std::vector<int>::iterator left_child_of(std::vector<int>::iterator parent);
-  std::vector<int>::iterator right_child_of(std::vector<int>::iterator parent);
-  void bubble_up(std::vector<int>::iterator elem);
-  void bubble_down(std::vector<int>::iterator elem);
-  void bubble_down(std::vector<int>::iterator elem, std::vector<int>::iterator last);
+  iterator parent_of(iterator child);
+  iterator left_child_of(iterator parent);
+  iterator right_child_of(iterator parent);
+  void bubble_up(iterator elem);
+  void bubble_down(iterator elem);
+  void bubble_down(iterator elem, iterator last);
   
   std::vector<int> rep;
 };
 
-max_heap::max_heap(std::vector<int>::iterator begin, std::vector<int>::iterator end)
+template<typename Type>
+max_heap<Type>::max_heap(iterator begin, iterator end)
   : rep(begin, end) {
   build();
 }
 
-void max_heap::build() {
+template<typename Type>
+typename max_heap<Type>::iterator
+max_heap<Type>::begin() { return rep.begin(); }
+
+template<typename Type>
+typename max_heap<Type>::const_iterator
+max_heap<Type>::begin() const { return rep.begin(); }
+
+template<typename Type>
+typename max_heap<Type>::const_iterator
+max_heap<Type>::cbegin() const { return rep.begin(); }
+
+template<typename Type>
+typename max_heap<Type>::iterator
+max_heap<Type>::end() { return rep.end(); }
+
+template<typename Type>
+typename max_heap<Type>::const_iterator
+max_heap<Type>::end() const { return rep.end(); }
+
+template<typename Type>
+typename max_heap<Type>::const_iterator
+max_heap<Type>::cend() const { return rep.end(); }
+
+template<typename Type>
+bool max_heap<Type>::operator==(const max_heap<Type>& other) {
+  return std::equal(begin(), end(), other.begin(), other.end());
+}
+
+template<typename Type>
+bool max_heap<Type>::operator!=(const max_heap<Type>& other) {
+  return !operator==(other);
+}
+
+template<typename Type>
+void max_heap<Type>::swap(max_heap<Type>& other) {
+  std::swap(rep, other.rep);
+}
+
+template<typename Type>
+void swap(max_heap<Type>& lhs, max_heap<Type> rhs) {
+  lhs.swap(rhs);
+}
+
+template<typename Type>
+typename max_heap<Type>::size_type
+max_heap<Type>::size() const { return rep.size(); }
+
+template<typename Type>
+typename max_heap<Type>::size_type
+max_heap<Type>::max_size() const { return rep.max_size(); }
+
+template<typename Type>
+bool max_heap<Type>::empty() const { return rep.empty(); }
+
+template<typename Type>
+void max_heap<Type>::build() {
   // skip leaf nodes  
-  const auto n = rep.begin() + std::ceil(rep.size() / 2);
-  for (auto i = n; i >= rep.begin(); --i)
+  const auto n = begin() + std::ceil(rep.size() / 2);
+  for (auto i = n; i >= begin(); --i)
     bubble_down(i);
 }
 
-void max_heap::sort() {
-  auto iter = rep.end() - 1;
+template<typename Type>
+void max_heap<Type>::sort() {
+  auto iter = end() - 1;
 
-  while (iter >= rep.begin()) {
-    std::swap(rep.front(), *iter);
+  while (iter >= begin()) {
+    std::swap(*begin(), *iter);
     // bubble root down but ignore elements past iter
-    bubble_down(rep.begin(), iter);
+    bubble_down(begin(), iter);
     --iter;
   }
 }
 
-int max_heap::maximum() const { return rep[0]; }
+template<typename Type>
+typename max_heap<Type>::reference
+max_heap<Type>::maximum() const { return rep[0]; }
 
-std::size_t max_heap::size() const { return rep.size(); }
-
-void max_heap::remove(std::vector<int>::iterator elem) {
-  std::swap(*elem, rep.back());
-  rep.resize(rep.size() - 1);
-  if (rep.size() > 0)
-    bubble_down(rep.begin());
+template<typename Type>
+void max_heap<Type>::remove(iterator elem) {
+  std::swap(*elem, *(end() - 1));
+  rep.resize(size() - 1);
+  if (size() > 0)
+    bubble_down(begin());
 }
 
-void max_heap::remove_maximum() {
-  remove(rep.begin());
+template<typename Type>
+void max_heap<Type>::remove_maximum() {
+  remove(begin());
 }
 
-std::vector<int>::iterator
-max_heap::parent_of(std::vector<int>::iterator child) {
+template<typename Type>
+typename max_heap<Type>::iterator
+max_heap<Type>::parent_of(iterator child) {
   // parent = floor((i - 1) / 2)
-  const auto idx = std::distance(rep.begin(), child);
-  return rep.begin() + (idx - 1) / 2;
+  const auto idx = std::distance(begin(), child);
+  return begin() + (idx - 1) / 2;
 }
 
-std::vector<int>::iterator
-max_heap::left_child_of(std::vector<int>::iterator parent) {
+template<typename Type>
+typename max_heap<Type>::iterator
+max_heap<Type>::left_child_of(iterator parent) {
   // left_child = 2i + 1
-  const auto idx = std::distance(rep.begin(), parent);
-  return rep.begin() + (2 * idx) + 1;
+  const auto idx = std::distance(begin(), parent);
+  return begin() + (2 * idx) + 1;
 }
 
-std::vector<int>::iterator
-max_heap::right_child_of(std::vector<int>::iterator parent) {
+template<typename Type>
+typename max_heap<Type>::iterator
+max_heap<Type>::right_child_of(iterator parent) {
   // right_child = 2i + 2
-  const auto idx = std::distance(rep.begin(), parent);
-  return rep.begin() + (2 * idx) + 2;
+  const auto idx = std::distance(begin(), parent);
+  return begin() + (2 * idx) + 2;
 }
 
-void max_heap::bubble_up(std::vector<int>::iterator elem) {
+template<typename Type>
+void max_heap<Type>::bubble_up(iterator elem) {
   auto child = elem;
   auto parent = parent_of(child);
 
@@ -103,11 +191,13 @@ void max_heap::bubble_up(std::vector<int>::iterator elem) {
   }
 }
 
-void max_heap::bubble_down(std::vector<int>::iterator elem) {
-  bubble_down(elem, rep.end());
+template<typename Type>
+void max_heap<Type>::bubble_down(iterator elem) {
+  bubble_down(elem, end());
 }
 
-void max_heap::bubble_down(std::vector<int>::iterator elem, std::vector<int>::iterator last) {
+template<typename Type>
+void max_heap<Type>::bubble_down(iterator elem, iterator last) {
   auto parent = elem;
   auto left_child = left_child_of(parent);
   auto right_child = right_child_of(parent);
@@ -123,7 +213,7 @@ void max_heap::bubble_down(std::vector<int>::iterator elem, std::vector<int>::it
       if (*max < *right_child)
         max = right_child;
 
-    // heap property fixed
+    // max_heap property fixed
     if (parent == max) break;
 
     // swap with the greater child
@@ -134,17 +224,19 @@ void max_heap::bubble_down(std::vector<int>::iterator elem, std::vector<int>::it
   }
 }
 
-void max_heap::insert(int value) {
+template<typename Type>
+void max_heap<Type>::insert(value_type value) {
   rep.push_back(value);
-  bubble_up(rep.end() - 1);
+  bubble_up(end() - 1);
 }
 
-std::ostream& operator<<(std::ostream& out, const max_heap& heap) {
-  // output contents of heap.rep
-  if (heap.rep.size() > 0) {
-    out << heap.rep.front();
-    for (auto i = 1u; i < heap.rep.size(); ++i)
-      out << ' ' << heap.rep[i];
+template<typename Type>
+std::ostream& operator<<(std::ostream& out, const max_heap<Type>& max_heap) {
+  // output contents of max_heap
+  if (max_heap.size() > 0) {
+    std::cout << *max_heap.begin();
+    for (auto i = max_heap.begin() + 1; i < max_heap.end(); ++i)
+      std::cout << ' ' << *i;
   }
   
   return out;
@@ -165,7 +257,7 @@ int main() {
   
   while (std::getline(stream, line, ' ')) {
     try {
-      int n = std::stoi(line);
+      const int n = std::stoi(line);
       arr.push_back(n);
     } catch (...) {
       // ignore for now
@@ -173,12 +265,12 @@ int main() {
     }
   }
 
-  // linear time to build heap
-  max_heap heap(arr.begin(), arr.end());
-  std::cout << "heap before: " << heap << '\n';
-  heap.sort();
-  std::cout << "heap sorted: " << heap << '\n';
-  heap.build();
-  heap.insert(22);
-  std::cout << "heap inserted: " << heap << '\n';
+  // linear time to build max_heap
+  max_heap<int> h(arr.begin(), arr.end());
+  std::cout << "h before: " << h << '\n';
+  h.sort();
+  std::cout << "h sorted: " << h << '\n';
+  h.build();
+  h.insert(22);
+  std::cout << "h inserted: " << h << '\n';
 }
