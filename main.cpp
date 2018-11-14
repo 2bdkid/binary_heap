@@ -266,11 +266,11 @@ void max_heap<Type>::insert(value_type value) {
 }
 
 template<typename Type>
-std::ostream& operator<<(std::ostream& out, const max_heap<Type>& max_heap) {
-  // output contents of max_heap
-  if (max_heap.size() > 0) {
-    std::cout << *max_heap.begin();
-    for (auto i = max_heap.begin() + 1; i < max_heap.end(); ++i)
+std::ostream& operator<<(std::ostream& out, const max_heap<Type>& heap) {
+  // output contents of heap
+  if (heap.size() > 0) {
+    std::cout << *heap.begin();
+    for (auto i = heap.begin() + 1; i < heap.end(); ++i)
       std::cout << ' ' << *i;
   }
   
