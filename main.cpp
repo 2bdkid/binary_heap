@@ -66,8 +66,8 @@ private:
 template<typename Type>
 max_heap<Type>::max_heap(iterator begin, iterator end)
   : _rep(begin, end) {
+  _size = _rep.size();  
   build();
-  _size = _rep.size();
 }
 
 template<typename Type>
@@ -157,7 +157,7 @@ bool max_heap<Type>::empty() const { return _size == 0; }
 template<typename Type>
 void max_heap<Type>::build() {
   // skip leaf nodes  
-  const auto n = begin() + std::ceil(size() / 2);
+  const auto n = begin() + size() / 2;
   for (auto i = n; i >= begin(); --i)
     bubble_down(i);
 }
@@ -321,12 +321,4 @@ int main() {
   std::cout << "h before: " << h << '\n';
   h.sort();
   std::cout << "h sorted: " << h << '\n';
-  h.build();
-  h.insert(22);
-  h.insert(22);
-  h.insert(22);
-  h.insert(22);
-  h.insert(22);
-  std::cout << "h inserted: " << h << '\n';
-  auto m = h.maximum();
 }
