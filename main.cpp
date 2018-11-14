@@ -45,7 +45,7 @@ public:
   void insert(value_type value);
   void remove(iterator elem);
   void remove_maximum();
-  reference maximum() const;
+  reference maximum();
 
   // build tree in linear time
   void build();
@@ -303,4 +303,5 @@ int main() {
   h.build();
   h.insert(22);
   std::cout << "h inserted: " << h << '\n';
+  auto m = h.maximum();
 }
