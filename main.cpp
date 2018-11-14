@@ -59,53 +59,57 @@ private:
   void bubble_down(iterator elem);
   void bubble_down(iterator elem, iterator last);
   
-  std::vector<value_type> rep;
+  std::vector<value_type> _rep;
+  size_type _size = 0;
 };
 
 template<typename Type>
 max_heap<Type>::max_heap(iterator begin, iterator end)
-  : rep(begin, end) {
+  : _rep(begin, end) {
   build();
+  _size = _rep.size();
 }
 
 template<typename Type>
 max_heap<Type>::max_heap(const max_heap<Type>& other)
-  : rep(other.rep) { }
+  : _rep(other._rep), _size(other._size) { }
 
 template<typename Type>
 max_heap<Type>::max_heap(max_heap<Type>&& other) {
-  std::swap(rep, other.rep);
+  std::swap(_rep, other._rep);
+  std::swap(_size, other._size);
 }
 
 template<typename Type>
 typename max_heap<Type>::iterator
-max_heap<Type>::begin() { return rep.begin(); }
+max_heap<Type>::begin() { return _rep.begin(); }
 
 template<typename Type>
 typename max_heap<Type>::const_iterator
-max_heap<Type>::begin() const { return rep.begin(); }
+max_heap<Type>::begin() const { return _rep.begin(); }
 
 template<typename Type>
 typename max_heap<Type>::const_iterator
-max_heap<Type>::cbegin() const { return rep.begin(); }
+max_heap<Type>::cbegin() const { return _rep.begin(); }
 
 template<typename Type>
 typename max_heap<Type>::iterator
-max_heap<Type>::end() { return rep.end(); }
+max_heap<Type>::end() { return begin() + _size; }
 
 template<typename Type>
 typename max_heap<Type>::const_iterator
-max_heap<Type>::end() const { return rep.end(); }
+max_heap<Type>::end() const { return begin() + _size; }
 
 template<typename Type>
 typename max_heap<Type>::const_iterator
-max_heap<Type>::cend() const { return rep.end(); }
+max_heap<Type>::cend() const { return begin() + _size; }
 
 template<typename Type>
 typename max_heap<Type>::reference
 max_heap<Type>::operator=(max_heap<Type> other) {
   // copy-swap
-  std::swap(rep, other.rep);
+  std::swap(_rep, other._rep);
+  std::swap(_size, other._size);
   return *this;
 }
 
@@ -113,7 +117,8 @@ template<typename Type>
 typename max_heap<Type>::reference
 max_heap<Type>::operator=(max_heap<Type>&& other) {
   // copy-swap
-  std::swap(rep, other.rep);
+  std::swap(_rep, other._rep);
+  std::swap(_size, other._size);
   return *this;
 }
 
@@ -129,7 +134,8 @@ bool max_heap<Type>::operator!=(const max_heap<Type>& other) {
 
 template<typename Type>
 void max_heap<Type>::swap(max_heap<Type>& other) {
-  std::swap(rep, other.rep);
+  std::swap(_rep, other._rep);
+  std::swap(_size, other._size);
 }
 
 template<typename Type>
@@ -139,14 +145,14 @@ void swap(max_heap<Type>& lhs, max_heap<Type> rhs) {
 
 template<typename Type>
 typename max_heap<Type>::size_type
-max_heap<Type>::size() const { return rep.size(); }
+max_heap<Type>::size() const { return _size; }
 
 template<typename Type>
 typename max_heap<Type>::size_type
-max_heap<Type>::max_size() const { return rep.max_size(); }
+max_heap<Type>::max_size() const { return _rep.max_size(); }
 
 template<typename Type>
-bool max_heap<Type>::empty() const { return rep.empty(); }
+bool max_heap<Type>::empty() const { return _size == 0; }
 
 template<typename Type>
 void max_heap<Type>::build() {
@@ -181,7 +187,7 @@ template<typename Type>
 void max_heap<Type>::remove(iterator elem) {
   using std::swap;
   swap(*elem, *(end() - 1));
-  rep.resize(size() - 1);
+  --_size;
   if (size() > 0)
     bubble_down(begin());
 }
@@ -265,7 +271,13 @@ void max_heap<Type>::bubble_down(iterator elem, iterator last) {
 
 template<typename Type>
 void max_heap<Type>::insert(value_type value) {
-  rep.push_back(std::move(value));
+  if (_size < _rep.size()) {
+    _rep[_size++] = std::move(value);
+  } else {
+    _rep.push_back(std::move(value));
+    ++_size;
+  }
+  
   bubble_up(end() - 1);
 }
 
@@ -310,6 +322,10 @@ int main() {
   h.sort();
   std::cout << "h sorted: " << h << '\n';
   h.build();
+  h.insert(22);
+  h.insert(22);
+  h.insert(22);
+  h.insert(22);
   h.insert(22);
   std::cout << "h inserted: " << h << '\n';
   auto m = h.maximum();
