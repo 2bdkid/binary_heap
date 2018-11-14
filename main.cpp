@@ -155,7 +155,7 @@ bool max_heap<Type>::empty() const { return _size == 0; }
 template<typename Type>
 void max_heap<Type>::build() {
   // skip leaf nodes  
-  const auto n = begin() + size() / 2;
+  const auto n = begin() + (size() / 2) - 1;
   for (auto i = n; i >= begin(); --i)
     bubble_down(i);
 }
