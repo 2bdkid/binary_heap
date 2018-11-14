@@ -59,7 +59,7 @@ private:
   void bubble_down(iterator elem);
   void bubble_down(iterator elem, iterator last);
   
-  std::vector<int> rep;
+  std::vector<value_type> rep;
 };
 
 template<typename Type>
@@ -161,7 +161,8 @@ void max_heap<Type>::sort() {
   auto iter = end() - 1;
 
   while (iter >= begin()) {
-    std::swap(*begin(), *iter);
+    using std::swap;
+    swap(*begin(), *iter);
     // bubble root down but ignore elements past iter
     bubble_down(begin(), iter);
     --iter;
@@ -178,7 +179,8 @@ max_heap<Type>::maximum() const { return *begin(); }
 
 template<typename Type>
 void max_heap<Type>::remove(iterator elem) {
-  std::swap(*elem, *(end() - 1));
+  using std::swap;
+  swap(*elem, *(end() - 1));
   rep.resize(size() - 1);
   if (size() > 0)
     bubble_down(begin());
@@ -220,7 +222,8 @@ void max_heap<Type>::bubble_up(iterator elem) {
 
   // bubble up
   while (child != parent && *child > *parent) {
-    std::swap(*child, *parent);
+    using std::swap;
+    swap(*child, *parent);
     child = parent;
     parent = parent_of(parent);
   }
@@ -252,7 +255,8 @@ void max_heap<Type>::bubble_down(iterator elem, iterator last) {
     if (parent == max) break;
 
     // swap with the greater child
-    std::swap(*parent, *max);
+    using std::swap;
+    swap(*parent, *max);
     parent = max;
     left_child = left_child_of(parent);
     right_child = right_child_of(parent);
