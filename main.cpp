@@ -46,6 +46,7 @@ public:
   void remove(iterator elem);
   void remove_maximum();
   reference maximum();
+  const_reference maximum() const;
 
   // build tree in linear time
   void build();
@@ -169,6 +170,10 @@ void max_heap<Type>::sort() {
 
 template<typename Type>
 typename max_heap<Type>::reference
+max_heap<Type>::maximum() { return *begin(); }
+
+template<typename Type>
+typename max_heap<Type>::const_reference
 max_heap<Type>::maximum() const { return *begin(); }
 
 template<typename Type>
