@@ -79,10 +79,8 @@ heap<Type, Compare>::heap(const heap<Type, Compare>& other)
   : _rep(other._rep), _size(other._size) { }
 
 template<typename Type, typename Compare>
-heap<Type, Compare>::heap(heap<Type, Compare>&& other) {
-  std::swap(_rep, other._rep);
-  std::swap(_size, other._size);
-}
+heap<Type, Compare>::heap(heap<Type, Compare>&& other)
+  : _rep(std::move(other._rep)), _size(other._size) {}
 
 template<typename Type, typename Compare>
 typename heap<Type, Compare>::iterator
