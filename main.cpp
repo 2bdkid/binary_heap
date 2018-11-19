@@ -323,7 +323,7 @@ int main() {
 
   // linear time to build heap
   max_heap<int> h(arr.begin(), arr.end());
-  std::cout << "h before: " << h << '\n';
+  std::cout << "array representation: " << h << '\n';
   h.sort();
-  std::cout << "h sorted: " << h << '\n';
+  std::cout << "array sorted:         " << h << '\n';
 }
