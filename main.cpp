@@ -17,7 +17,7 @@ public:
   using size_type = typename std::vector<Type>::size_type;
   using value_compare = Compare;
 
-  heap();
+  heap() = default;
   ~heap() = default;
   heap(iterator begin, iterator end);
   heap(const heap<Type, Compare>& other);
@@ -65,11 +65,8 @@ private:
 };
 
 template<typename Type, typename Compare>
-heap<Type, Compare>::heap() : comp(Compare()) {}
-
-template<typename Type, typename Compare>
 heap<Type, Compare>::heap(iterator begin, iterator end)
-  : _rep(begin, end), comp(Compare()) {
+  : _rep(begin, end) {
   _size = _rep.size();  
   build();
 }
