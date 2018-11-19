@@ -303,7 +303,7 @@ int main() {
 
   // get set of integers from stdin
   do {
-    std::cout << "insert set of integers: ";
+    std::cout << "insert set of integers:   ";
     std::getline(std::cin, line);
   } while (line == "");
 
@@ -322,8 +322,12 @@ int main() {
   }
 
   // linear time to build heap
-  max_heap<int> h(arr.begin(), arr.end());
-  std::cout << "array representation: " << h << '\n';
-  h.sort();
-  std::cout << "array sorted:         " << h << '\n';
+  max_heap<int> hmax(arr.begin(), arr.end());
+  min_heap<int> hmin(arr.begin(), arr.end());
+  std::cout << "max array representation: " << hmax << '\n';
+  std::cout << "min array representation: " << hmin << '\n';
+  hmax.sort();
+  hmin.sort();
+  std::cout << "max array sorted:         " << hmax << '\n';
+  std::cout << "min array sorted:         " << hmin << '\n';
 }
