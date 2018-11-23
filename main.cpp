@@ -247,22 +247,21 @@ void heap<Type, Compare>::bubble_down(iterator elem, iterator last) {
 
   // stop at last
   while (left_child < last || right_child < last) {
-    // find maximum of parent, left_child, right_child
-    auto max = parent;
+    auto target = parent;
     if (left_child < last)
-      if (comp(*max, *left_child))
-        max = left_child;
+      if (comp(*target, *left_child))
+        target = left_child;
     if (right_child < last)
-      if (comp(*max, *right_child))
-        max = right_child;
+      if (comp(*target, *right_child))
+        target = right_child;
 
     // heap property fixed
-    if (parent == max) break;
+    if (parent == target) break;
 
-    // swap with the greater child
+    // swap with the target
     using std::swap;
-    swap(*parent, *max);
-    parent = max;
+    swap(*parent, *target);
+    parent = target;
     left_child = left_child_of(parent);
     right_child = right_child_of(parent);
   }
